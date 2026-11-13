@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASIO fx-991ES PLUS - Pro Edition</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .calculator {
+            background-color: #222225;
+            width: 100%;
+            max-width: 360px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 2px solid #444;
+        }
+
+        .brand-header {
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+
+        .brand-header h1 {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .brand-header span {
+            font-size: 10px;
+            color: #bbb;
+        }
+
+        .screen {
+            background-color: #c4d7b2;
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 15px;
+            border: 3px inset #88987b;
+            min-height: 75px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .screen-header-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            color: #222;
+            min-height: 15px;
+        }
+
+        .memory-indicator {
+            color: #900;
+            display: none;
+        }
+
+        .screen-top {
+            font-size: 12px;
+            color: #444;
+            text-align: right;
+            min-height: 16px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .screen-main {
+            font-size: 26px;
+            font-weight: bold;
+            color: #111;
+            text-align: right;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        button {
+            padding: 12px 0;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            transition: 0.05s;
+            box-align: center;
+            box-shadow: 0 3px #111;
+            user-select: none;
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px #111;
+        }
+
+        .btn-dark { background-color: #333338; color: #eee; }
+        .btn-gray { background-color: #55555d; color: #fff; }
+        .btn-shift { background-color: #d4a373; color: #000; }
+        .btn-alpha { background-color: #bc4749; color: #fff; }
+        .btn-op { background-color: #e65f2b; color: #fff; }
+        .btn-equals { background-color: #1d3557; color: #fff; }
+        .btn-mem { background-color: #7b2cbf; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="brand-header">
+            <h1>CASIO</h1>
+            <span>fx-991ES PLUS NATURAL-V.P.A.M.</span>
+        </div>
+
+        <div class="screen">
+            <div class="screen-header-line">
+                <span class="memory-indicator" id="memIndicator">M</span>
+                <span id="modeIndicator"></span>
+            </div>
+            <div class="screen-top" id="screenTop"></div>
+            <div class="screen-main" id="screenMain">0</div>
+        </div>
+
+        <div class="buttons-grid">
+            <!-- Row 1 -->
+            <button class="btn-shift" onclick="pressKey('SHIFT')">SHIFT</button>
+            <button class="btn-alpha" onclick="pressKey('ALPHA')">ALPHA</button>
+            <button class="btn-dark" onclick="pressKey('UP')">▲</button>
+            <button class="btn-dark" onclick="pressKey('DOWN')">▼</button>
+            <button class="btn-op" onclick="deleteChar()">DEL</button>
+
+            <!-- Row 2 -->
+            <button class="btn-dark" onclick="pressKey('MODE')">MODE</button>
+            <button class="btn-dark" onclick="pressKey('CALC')">CALC</button>
+            <button class="btn-dark" onclick="pressKey('SOLVE')">SOLVE</button>
+            <button class="btn-dark" onclick="pressKey('ENG')">ENG</button>
+            <button class="btn-dark" onclick="clearAll()">AC</button>
+
+            <!-- Row 3 -->
+            <button class="btn-gray" onclick="appendValue('sin(')">sin</button>
+            <button class="btn-gray" onclick="appendValue('cos(')">cos</button>
+            <button class="btn-gray" onclick="appendValue('tan(')">tan</button>
+            <button class="btn-gray" onclick="appendValue('Math.sqrt(')">√</button>
+            <button class="btn-gray" onclick="appendValue('**2')">x²</button>
+
+            <!-- Row 4 -->
+            <button class="btn-gray" onclick="appendValue('Math.log10(')">log</button>
+            <button class="btn-gray" onclick="appendValue('Math.log(')">ln</button>
+            <button class="btn-gray" onclick="appendValue('/')">a b/c</button>
+            <button class="btn-gray" onclick="appendValue('(')">(</button>
+            <button class="btn-gray" onclick="appendValue(')')">)</button>
+
+            <!-- Row 5: الترتيب المطلوب (7, 8, 9, ON, ÷) من الشمال لليمين -->
+            <button class="btn-dark" onclick="appendValue('7')">7</button>
+            <button class="btn-dark" onclick="appendValue('8')">8</button>
+            <button class="btn-dark" onclick="appendValue('9')">9</button>
+            <button class="btn-dark" onclick="pressKey('ON')">ON</button>
+            <button class="btn-op" onclick="appendValue('/')">÷</button>
+
+            <!-- Row 6 -->
+            <button class="btn-dark" onclick="appendValue('4')">4</button>
+            <button class="btn-dark" onclick="appendValue('5')">5</button>
+            <button class="btn-dark" onclick="appendValue('6')">6</button>
+            <button class="btn-op" onclick="appendValue('*')">×</button>
+            <button class="btn-op" onclick="appendValue('-')">-</button>
+
+            <!-- Row 7 -->
+            <button class="btn-dark" onclick="appendValue('1')">1</button>
+            <button class="btn-dark" onclick="appendValue('2')">2</button>
+            <button class="btn-dark" onclick="appendValue('3')">3</button>
+            <button class="btn-op" onclick="appendValue('+')">+</button>
+            <button class="btn-equals" onclick="calculateResult()" style="grid-row: span 2;">=</button>
+
+            <!-- Row 8 -->
+            <button class="btn-dark" onclick="appendValue('0')">0</button>
+            <button class="btn-dark" onclick="appendValue('.')">.</button>
+            <button class="btn-dark" onclick="appendValue('Math.PI')">π</button>
+            <button class="btn-dark" onclick="useAns()">Ans</button>
+
+            <!-- Row 9: Memory Buttons -->
+            <button class="btn-mem" onclick="memClear()">MC</button>
+            <button class="btn-mem" onclick="memRecall()">MR</button>
+            <button class="btn-mem" onclick="memAdd()">M+</button>
+            <button class="btn-mem" onclick="memSub()">M-</button>
+            <button class="btn-mem" onclick="memStore()">STO</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = "0";
+        let topExpression = "";
+        let memory = 0;
+        let hasMemory = false;
+        let ans = 0;
+        let justCalculated = false;
+        let justRecalledMemory = false;
+
+        const screenMain = document.getElementById("screenMain");
+        const screenTop = document.getElementById("screenTop");
+        const memIndicator = document.getElementById("memIndicator");
+
+        function updateScreen() {
+            screenMain.innerText = currentInput;
+            screenTop.innerText = topExpression;
+            
+            if (hasMemory) {
+                memIndicator.style.display = "inline";
+            } else {
+                memIndicator.style.display = "none";
+            }
+        }
+
+        function appendValue(val) {
+            let isOperator = ['+', '-', '*', '/'].includes(val);
+
+            if (justCalculated) {
+                if (isOperator) {
+                    justCalculated = false;
+                } else {
+                    currentInput = "0";
+                    topExpression = "";
+                    justCalculated = false;
+                }
+            }
+
+            if (justRecalledMemory) {
+                if (isOperator) {
+                    justRecalledMemory = false;
+                } else {
+                    currentInput = "0";
+                    topExpression = "";
+                    justRecalledMemory = false;
+                }
+            }
+
+            if (currentInput === "0" && !isNaN(val)) {
+                currentInput = val;
+            } else {
+                currentInput += val;
+            }
+            updateScreen();
+        }
+
+        function clearAll() {
+            currentInput = "0";
+            topExpression = "";
+            justCalculated = false;
+            justRecalledMemory = false;
+            updateScreen();
+        }
+
+        function deleteChar() {
+            if (justCalculated || justRecalledMemory) return;
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = "0";
+            }
+            updateScreen();
+        }
+
+        function calculateResult() {
+            try {
+                topExpression = currentInput;
+                let evalString = currentInput
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/');
+
+                let result = eval(evalString);
+                ans = result;
+                currentInput = String(result);
+                justCalculated = true;
+                justRecalledMemory = false;
+                updateScreen();
+            } catch (error) {
+                currentInput = "Math Error";
+                updateScreen();
+                setTimeout(clearAll, 1500);
+            }
+        }
+
+        function useAns() {
+            appendValue(String(ans));
+        }
+
+        // --- دوال الذاكرة ---
+        function memClear() {
+            memory = 0;
+            hasMemory = false;
+            updateScreen();
+        }
+
+        function memRecall() {
+            currentInput = String(memory);
+            justRecalledMemory = true;
+            updateScreen();
+        }
+
+        function memAdd() {
+            try {
+                memory += eval(currentInput);
+                hasMemory = true;
+                justCalculated = true;
+                updateScreen();
+            } catch {}
+        }
+
+        function memSub() {
+            try {
+                memory -= eval(currentInput);
+                hasMemory = true;
+                justCalculated = true;
+                updateScreen();
+            } catch {}
+        }
+
+        function memStore() {
+            try {
+                memory = eval(currentInput);
+                hasMemory = true;
+                justCalculated = true;
+                updateScreen();
+            } catch {}
+        }
+
+        function pressKey(keyName) {
+            if(keyName === 'ON') clearAll();
+        }
+
+        // --- دعم لوحة المفاتيح ---
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (!isNaN(key) || key === '.') {
+                appendValue(key);
+            } else if (key === '+') {
+                appendValue('+');
+            } else if (key === '-') {
+                appendValue('-');
+            } else if (key === '*') {
+                appendValue('*');
+            } else if (key === '/') {
+                event.preventDefault();
+                appendValue('/');
+            } else if (key === 'Enter' || key === '=') {
+                calculateResult();
+            } else if (key === 'Backspace') {
+                deleteChar();
+            } else if (key === 'Escape' || key === 'Delete') {
+                clearAll();
+            }
+        });
+    </script>
+</body>
+</html>
